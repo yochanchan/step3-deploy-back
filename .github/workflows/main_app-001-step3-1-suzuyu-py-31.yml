@@ -4,9 +4,6 @@
 
 name: Build and deploy Python app to Azure Web App - app-001-step3-1-suzuyu-py-31
 
-env:
-  AZURE_WEBAPP_PACKAGE_PATH: backend
-  
 on:
   push:
     branches:
@@ -33,14 +30,12 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r $AZURE_WEBAPP_PACKAGE_PATH/requirements.txt
+        run: pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
-        run: |
-          cd $AZURE_WEBAPP_PACKAGE_PATH
-          zip -r ../release.zip . 
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -63,6 +58,10 @@ jobs:
         with:
           name: python-app
 
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+
+      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
@@ -70,4 +69,3 @@ jobs:
           app-name: 'app-001-step3-1-suzuyu-py-31'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D9FD604E10A7426098EEDBD7D9D82687 }}
-          package: release.zip        # ★ZIP ファイルを直接指定
