@@ -13,5 +13,3 @@ node_modules/
 # その他
 *.log
 .DS_Store
-.crt.pem
-*.pem
